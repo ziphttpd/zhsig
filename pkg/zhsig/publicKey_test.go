@@ -6,6 +6,21 @@ import (
 	"testing"
 )
 
+func TestPublicKeyFetchFromURL(t *testing.T) {
+	err := TempSpace(func(tempdir string) error {
+		host := NewHost(tempdir, "www.xorver.com")
+		_, err := PublicKeyFetchFromURL(host)
+		if err != nil {
+			t.Fatal("PublicKey", err)
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestPublicKeyFromURL(t *testing.T) {
 	err := TempSpace(func(tempdir string) error {
 		host := NewHost(tempdir, "www.xorver.com")

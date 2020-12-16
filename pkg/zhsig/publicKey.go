@@ -16,6 +16,41 @@ func PublicKey(host Host) (pub *rsa.PublicKey, err error) {
 	return publicKeyFromURL(host)
 }
 
+// PublicKeyFetchFromURL は署名データ中のURLから最新の公開鍵と署名ファイルを読みだして公開鍵を検証して準備します。
+func PublicKeyFetchFromURL(host Host) (*rsa.PublicKey, error) {
+	// 公開鍵ファイル
+	pemBytes, err := GetBytesHTTP(host.PublicKeyURL())
+	if err != nil {
+		return nil, err
+	}
+
+	// 公開鍵の署名ファイル
+	sig64 := FetchSig(host, PublicPemName)
+
+	// 公開鍵の実際のハッシュ
+	pemHash := CalcHashBytes(pemBytes)
+
+	// 公開鍵
+	publicKey, err := DecodePublicKeyBytes(pemBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	// 公開鍵の署名データ
+	sigBytes, err := base64.StdEncoding.DecodeString(sig64)
+	if err != nil {
+		return nil, err
+	}
+
+	// 検証
+	err = di.VerifyPSS(publicKey, crypto.SHA512, pemHash, sigBytes, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return publicKey, err
+}
+
 // publicKeyFromURL は署名データ中のURLから最新の公開鍵と署名ファイルを読みだして公開鍵を検証して準備します。
 func publicKeyFromURL(host Host) (*rsa.PublicKey, error) {
 	// 公開鍵ファイル
