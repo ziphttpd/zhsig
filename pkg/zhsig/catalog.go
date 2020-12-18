@@ -7,14 +7,16 @@ import (
 )
 
 const (
-	catalogPeer   = "peer"
-	catalogGroups = "groups"
+	catalogPeer        = "peer"
+	catalogDescription = "description"
+	catalogGroups      = "groups"
 )
 
 // Catalog はサイトのカタログです。
 type Catalog struct {
-	Peer   *PeerInfo
-	Groups map[string]*GroupInfo
+	Peer        *PeerInfo
+	Description string
+	Groups      map[string]*GroupInfo
 }
 
 // GroupNames はグループの識別子の一覧を返します。
@@ -32,6 +34,7 @@ func (c *Catalog) JSON() json.ElemObject {
 	if c.Peer != nil {
 		ret.Put(catalogPeer, c.Peer.JSON())
 	}
+	ret.Put(catalogDescription, json.NewElemString(c.Description))
 	groups := json.NewElemObject()
 	for key, val := range c.Groups {
 		groups.Put(key, val.JSON())
@@ -94,6 +97,10 @@ func DecodeCatalog(eobj json.ElemObject) *Catalog {
 	// ピア情報
 	if po, ok := eobj.Child(catalogPeer).AsObject(); ok {
 		cat.Peer = DecodePeerInfo(po)
+	}
+	// 注釈
+	if de, ok := eobj.Child(catalogDescription).AsString(); ok {
+		cat.Description = de.Text()
 	}
 	// グループ情報
 	if ego, ok := eobj.Child(catalogGroups).AsObject(); ok {
