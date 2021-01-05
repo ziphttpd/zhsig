@@ -2,6 +2,7 @@ package zhsig
 
 import (
 	"crypto/rsa"
+	"os"
 	fpath "path/filepath"
 )
 
@@ -17,7 +18,8 @@ const (
 	CatalogName = "catalog.json"
 	privatePath = "private"
 	publicPath  = "public"
-	storePath   = "store"
+	// StorePath はダウンロードしたファイルの置き場所です
+	StorePath = "store"
 )
 
 // Host はホストを表します。
@@ -60,6 +62,8 @@ type Host interface {
 	StorePath() string
 	// File はファイルのパスを返します。
 	File(name string, file string) string
+	// DocFile はファイルのパスを返します。
+	DocFile(group, name string, file string) string
 	// SigFile はファイルの署名パスを返します。
 	SigFile(name string) string
 	// SigURL は署名ファイルのURLを返します。
@@ -90,10 +94,23 @@ type HostInst struct {
 // ScanHosts はダウンロードしたHostを列挙します。
 func ScanHosts(baseDir string) []*HostInst {
 	dirs := []*HostInst{}
-	if fis, err := di.ReadDir(fpath.Join(baseDir, storePath)); err == nil {
+	if fis, err := di.ReadDir(fpath.Join(baseDir, StorePath)); err == nil {
 		for _, fi := range fis {
 			if fi.IsDir() {
-				dirs = append(dirs, NewHost(baseDir, fi.Name()))
+				host := NewHost(baseDir, fi.Name())
+				if _, err = os.Stat(host.CatalogFile()); err != nil {
+					// 規定のフォルダにカタログがないホストは無効
+					continue
+				}
+				if _, err = os.Stat(host.PublicKeyFile()); err != nil {
+					// 規定のフォルダに共通鍵がないホストは無効
+					continue
+				}
+				if _, err = os.Stat(host.SigFile(PublicPemName)); err != nil {
+					// 規定のフォルダに共通鍵署名がないホストは無効
+					continue
+				}
+				dirs = append(dirs, host)
 			}
 		}
 	}
@@ -185,7 +202,7 @@ func (s *HostInst) CatalogURL() string {
 
 // StorePath は保存ディレクトリを返します。
 func (s *HostInst) StorePath() string {
-	return fpath.Join(s.base, storePath, s.host)
+	return fpath.Join(s.base, StorePath, s.host)
 }
 
 // File はファイルのパスを返します。
@@ -193,6 +210,13 @@ func (s *HostInst) StorePath() string {
 func (s *HostInst) File(name string, filename string) string {
 	_, f := fpath.Split(filename)
 	return fpath.Join(s.StorePath(), name, f)
+}
+
+// DocFile はファイルのパスを返します。
+// ファイルはSigInfo.File()を使ってください。
+func (s *HostInst) DocFile(group, name string, filename string) string {
+	_, f := fpath.Split(filename)
+	return fpath.Join(s.StorePath(), group, name, f)
 }
 
 // SigFile は署名ファイルのパスを返します。

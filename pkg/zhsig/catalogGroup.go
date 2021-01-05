@@ -71,6 +71,7 @@ func DecodeGroupInfoMap(groups json.ElemObject) map[string]*GroupInfo {
 	ret := map[string]*GroupInfo{}
 	for _, groupname := range groups.Keys() {
 		if eg, ok := groups.Child(groupname).AsObject(); ok {
+			// TODO: groupname = strings.ToLower(groupname)
 			ret[groupname] = DecodeGroupInfo(eg, groupname)
 		}
 	}

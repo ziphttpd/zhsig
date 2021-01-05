@@ -50,6 +50,7 @@ func DecodeDocInfoMap(names json.ElemObject) map[string]*DocInfo {
 	ret := map[string]*DocInfo{}
 	for _, docname := range names.Keys() {
 		if en, ok := names.Child(docname).AsObject(); ok {
+			// TODO; docname = strings.ToLower(docname)
 			ret[docname] = DecodeDocInfo(en, docname)
 		}
 	}
