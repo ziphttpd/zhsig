@@ -3,6 +3,8 @@ package zhsig
 import (
 	"os"
 	fpath "path/filepath"
+
+	"github.com/xorvercom/util/pkg/fileutil"
 )
 
 // Update はホストのファイルをダウンロードします。
@@ -32,9 +34,17 @@ func Update(host Host) []error {
 					// 未ダウンロードか何かで署名が読み出せなかった
 					need = true
 				} else {
-					sigstr := FetchSig(host, docid)
-					if sigstr != "" && sig.Sig() != sigstr {
-						// 署名が更新されていた
+					// 本体はダウンロードされている
+					target := host.File(docid, sig.File())
+					if _, err := os.Stat(target); err == nil {
+						// 署名変更チェック
+						sigstr := FetchSig(host, docid)
+						if sigstr != "" && sig.Sig() != sigstr {
+							// 署名が更新されていた
+							need = true
+						}
+					} else {
+						// 本体がない
 						need = true
 					}
 				}
@@ -43,6 +53,7 @@ func Update(host Host) []error {
 					if sig, err := DownloadSig(host, docid); err == nil {
 						if err := sig.DownloadFile(); err != nil {
 							// TODO: ダウンロード失敗
+							fileutil.FileIfDelete(host.SigFile(docid))
 							errs = append(errs, err)
 						}
 					} else {
@@ -70,6 +81,7 @@ func Download(host Host, group string) []error {
 				need := false
 				if sig, err := ReadSig(host, docid); err != nil {
 					// 未ダウンロードか何かで署名が読み出せなかった
+					errs = append(errs, err)
 					need = true
 				} else {
 					sigstr := FetchSig(host, docid)
@@ -83,6 +95,7 @@ func Download(host Host, group string) []error {
 					if sig, err := DownloadSig(host, docid); err == nil {
 						if err := sig.DownloadFile(); err != nil {
 							// TODO: ダウンロード失敗
+							fileutil.FileIfDelete(host.SigFile(docid))
 							errs = append(errs, err)
 						}
 					} else {

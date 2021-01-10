@@ -51,7 +51,7 @@ func main() {
 	if hostname == "" {
 		// 以前にダウンロードした全ホストからのアップデート
 		for _, host := range zhsig.ScanHosts(dir) {
-			errs = zhsig.Update(host)
+			errs = append(errs, zhsig.Update(host)...)
 		}
 	} else {
 		// 指定ホストからのダウンロード
