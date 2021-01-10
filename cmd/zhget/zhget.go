@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 	fpath "path/filepath"
 
@@ -46,20 +47,24 @@ func main() {
 	// }
 	// sort.Strings(sitelist)
 
+	var errs []error
 	if hostname == "" {
 		// 以前にダウンロードした全ホストからのアップデート
 		for _, host := range zhsig.ScanHosts(dir) {
-			zhsig.Update(host)
+			errs = zhsig.Update(host)
 		}
 	} else {
 		// 指定ホストからのダウンロード
 		host := zhsig.NewHost(dir, hostname)
 		if groupname == "" {
 			// 既にダウンロードしているグループのアップデート
-			zhsig.Update(host)
+			errs = zhsig.Update(host)
 		} else {
 			// 指定グループをダウンロード (一度ダウンロードしなければアップデートされない)
-			zhsig.Download(host, groupname)
+			errs = zhsig.Download(host, groupname)
 		}
+	}
+	for _, err := range errs {
+		fmt.Println(err)
 	}
 }
