@@ -4,13 +4,12 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"encoding/pem"
-	"os"
 )
 
 // CreateZhkey はヘルプ証明書を作成します。
 func CreateZhkey(host Host) (reterr error) {
-	di.MkdirAll(host.PrivateKeyPath(), os.ModeDir)
-	di.MkdirAll(host.MyStorePath(), os.ModeDir)
+	di.MkdirAll(host.PrivateKeyPath(), 0755)
+	di.MkdirAll(host.MyStorePath(), 0755)
 	// ファイル
 	pathPriPem := host.PrivateKeyFile()
 	pathPubPem := host.MyPublicKeyFile()

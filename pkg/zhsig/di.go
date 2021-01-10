@@ -87,7 +87,7 @@ func copyfile(dst, src string) error {
 	}
 	defer s.Close()
 	dir, _ := fpath.Split(dst)
-	os.MkdirAll(dir, os.ModeDir)
+	os.MkdirAll(dir, 0755)
 	d, err := os.Create(dst)
 	if err != nil {
 		return err

@@ -34,7 +34,7 @@ func TestHost1(t *testing.T) {
 
 		testTxt := host.File("test.txt", "test_2020.txt")
 		t.Log("File: " + testTxt)
-		os.MkdirAll(fpath.Dir(testTxt), os.ModeDir)
+		os.MkdirAll(fpath.Dir(testTxt), 0755)
 		txt, err := os.Create(testTxt)
 		if err != nil {
 			return err
@@ -43,7 +43,7 @@ func TestHost1(t *testing.T) {
 
 		testSig := host.SigFile("test.txt")
 		t.Log(testSig)
-		os.MkdirAll(fpath.Dir(testSig), os.ModeDir)
+		os.MkdirAll(fpath.Dir(testSig), 0755)
 		sig, err := os.Create(testSig)
 		if err != nil {
 			return err

@@ -3,7 +3,6 @@ package zhsig
 import (
 	"fmt"
 	"io"
-	"os"
 	fpath "path/filepath"
 )
 
@@ -28,7 +27,7 @@ func GetFileHTTP(url string, file string) error {
 	if res.StatusCode < 200 || res.StatusCode > 299 {
 		return fmt.Errorf("%s return %s", url, res.Status)
 	}
-	di.MkdirAll(fpath.Dir(file), os.ModeDir)
+	di.MkdirAll(fpath.Dir(file), 0755)
 	f, err := di.Create(file)
 	if err != nil {
 		return err

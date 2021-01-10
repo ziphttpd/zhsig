@@ -8,7 +8,6 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/url"
-	"os"
 	fpath "path/filepath"
 
 	"github.com/xorvercom/util/pkg/json"
@@ -126,7 +125,7 @@ func (z *sigInfo) DownloadFile() error {
 
 // Save は署名を保存します。
 func (z *sigInfo) Save(path string) error {
-	di.MkdirAll(fpath.Dir(path), os.ModeDir)
+	di.MkdirAll(fpath.Dir(path), 0755)
 	elem := json.NewElemObject()
 	elem.Put(pathHost, json.NewElemString(z.Host()))
 	elem.Put(pathName, json.NewElemString(z.Name()))
@@ -258,7 +257,7 @@ func sigFromFile(host Host, name string) (*sigInfo, error) {
 func sigDownload(host Host, name string) error {
 	sigurl := host.SigURL(name)
 	path := host.SigFile(name)
-	// di.MkdirAll(host.MyStorePath(), os.ModeDir)
+	// di.MkdirAll(host.MyStorePath(), 0755)
 	return GetFileHTTP(sigurl, path)
 }
 
