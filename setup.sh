@@ -9,7 +9,7 @@ fi
 
 SCRIPT_DIR=$(cd $(dirname ${SCRIPT}); pwd)
 cd ${SCRIPT_DIR}
-go build -o ${TARGET_DIR}/zhget cmd/main.go
-go build -o ${TARGET_DIR}/zhsign cmd/main.go
+go build -o ${TARGET_DIR}/zhget cmd/zhget/zhget.go
+go build -o ${TARGET_DIR}/zhsign cmd/zhsign/zhsign.go
 
 exit 0
