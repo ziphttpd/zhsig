@@ -9,6 +9,8 @@ fi
 
 SCRIPT_DIR=$(cd $(dirname ${SCRIPT}); pwd)
 cd ${SCRIPT_DIR}
+
+git pull
 go build -o ${TARGET_DIR}/zhget cmd/zhget/zhget.go
 go build -o ${TARGET_DIR}/zhsign cmd/zhsign/zhsign.go
 
