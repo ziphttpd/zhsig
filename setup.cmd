@@ -1,4 +1,4 @@
-@echo off
+rem @echo off
 
 set TARGET=%1
 set BASE=%~dp0
@@ -18,7 +18,7 @@ set TARGETEXE=%TARGET%%EXEID%.exe
 go build -o %BUILDEXE% cmd/zhsign/zhsign.go
 
 if exist %TARGETEXE%.old del /F %TARGETEXE%.old
-if exist %TARGETEXE% ren %TARGETEXE% %EXEID%.old
+if exist %TARGETEXE% ren %TARGETEXE% %TARGETEXE%.old
 copy %BUILDEXE% %TARGETEXE%
 
 set EXEID=zhget
@@ -28,7 +28,7 @@ set TARGETEXE=%TARGET%%EXEID%.exe
 go build -o %BUILDEXE% cmd/zhget/zhget.go
 
 if exist %TARGETEXE%.old del /F %TARGETEXE%.old
-if exist %TARGETEXE% ren %TARGETEXE% %EXEID%.old
+if exist %TARGETEXE% ren %TARGETEXE% %TARGETEXE%.old
 copy %BUILDEXE% %TARGETEXE%
 
 exit /B 0
