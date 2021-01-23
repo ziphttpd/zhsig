@@ -11,24 +11,24 @@ if "%ZH_HOME%" == "" (
 cd %SCRIPTDIR%
 git pull
 
-set EXEID=zhsign
-set SOURCE=%SCRIPTDIR%%EXEID%.exe
-set TARGET=%ZH_HOME%%EXEID%.exe
+set FILE=zhsign.exe
+set SOURCE=%SCRIPTDIR%%FILE%
+set TARGET=%ZH_HOME%%FILE%
 
 go build -o %SOURCE% cmd/zhsign/zhsign.go
 
 if exist %TARGET%.old del /Y %TARGET%.old
-if exist %TARGET% ren %TARGET% %TARGET%.old
+if exist %TARGET% ren %TARGET% %FILE%.old
 copy %SOURCE% %TARGET%
 
-set EXEID=zhget
-set SOURCE=%SCRIPTDIR%%EXEID%.exe
-set TARGET=%ZH_HOME%%EXEID%.exe
+set FILE=zhget.exe
+set SOURCE=%SCRIPTDIR%%FILE%
+set TARGET=%ZH_HOME%%FILE%
 
 go build -o %SOURCE% cmd/zhget/zhget.go
 
 if exist %TARGET%.old del /Y %TARGET%.old
-if exist %TARGET% ren %TARGET% %TARGET%.old
+if exist %TARGET% ren %TARGET% %FILE%.old
 copy %SOURCE% %TARGET%
 
 exit /B 0
