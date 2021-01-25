@@ -269,6 +269,12 @@ func CreateSignatureBASE64(key *rsa.PrivateKey, dataFile string) (string, error)
 		return "", err
 	}
 	// 署名
+	return SignatureBASE64(key, h)
+}
+
+// SignatureBASE64 はバイト列の署名を生成します。
+func SignatureBASE64(key *rsa.PrivateKey, h []byte) (string, error) {
+	// 署名
 	//s, err := rsa.SignPSS(rand.Reader, key, crypto.SHA512, h, nil)
 	s, err := di.SignPSS(rand.Reader, key, crypto.SHA512, h, nil)
 	if err != nil {

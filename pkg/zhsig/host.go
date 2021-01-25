@@ -16,8 +16,10 @@ const (
 	PublicSigName = "public.pem" + sigExt
 	// CatalogName はカタログファイル名です。
 	CatalogName = "catalog.json"
-	privatePath = "private"
-	publicPath  = "public"
+	// SiteFileName はサイト名署名ファイル名です。
+	SiteFileName = "site.json"
+	privatePath  = "private"
+	publicPath   = "public"
 	// StorePath はダウンロードしたファイルの置き場所です
 	StorePath = "store"
 )
@@ -39,6 +41,8 @@ type Host interface {
 	PublicKeySigURL() string
 	// CatalogURL はカタログファイルのURLを返します。
 	CatalogURL() string
+	// SiteFileURL はサイト名署名のURLを返します。
+	SiteFileURL() string
 
 	// PrivateKeyPath は秘密鍵のパスを返します。
 	PrivateKeyPath() string
@@ -57,6 +61,8 @@ type Host interface {
 	MyFileSig(name string) string
 	// MyCatalogFile は自分のカタログのパスを返します。
 	MyCatalogFile() string
+	// MySiteFile は自分のサイト名署名のパスを返します。
+	MySiteFile() string
 
 	// StorePath は保存パスを返します。
 	StorePath() string
@@ -174,6 +180,11 @@ func (s *HostInst) MyCatalogFile() string {
 	return s.MyFile(CatalogName)
 }
 
+// MySiteFile は自分のサイト名署名のパスを返します。
+func (s *HostInst) MySiteFile() string {
+	return s.MyFile(SiteFileName)
+}
+
 // BaseURL は公開鍵の基準パスを返します。
 func (s *HostInst) BaseURL() string {
 	return "https://" + s.host + "/sig/"
@@ -195,9 +206,14 @@ func (s *HostInst) PublicKeySigURL() string {
 	return s.FileURL(PublicSigName)
 }
 
-// CatalogURL は公カタログのURLを返します。
+// CatalogURL はカタログのURLを返します。
 func (s *HostInst) CatalogURL() string {
 	return s.FileURL(CatalogName)
+}
+
+// SiteFileURL はサイト名署名のURLを返します。
+func (s *HostInst) SiteFileURL() string {
+	return s.FileURL(SiteFileName)
 }
 
 // StorePath は保存ディレクトリを返します。

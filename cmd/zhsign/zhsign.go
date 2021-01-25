@@ -24,7 +24,7 @@ func main() {
 	flag.StringVar(&name, "name", "", "document name")
 	flag.StringVar(&file, "file", "", "document file")
 	flag.Parse()
-	if hostname == "" || name == "" || file == "" {
+	if hostname == "" {
 		flag.PrintDefaults()
 		return
 	}
@@ -35,14 +35,23 @@ func main() {
 	}
 	// ホストの関連情報生成
 	host := zhsig.NewHost(dir, hostname)
+	// site.json の生成
+	// https://github.com/ziphttpd/zhsig/issues/1 の暫定対応
+	err = zhsig.CreateSiteFile(host)
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	// 指定されたファイルを署名
-	if file != "" {
-		if f, err := os.Stat(file); os.IsNotExist(err) || f.IsDir() {
-			// TODO: ファイルなし
+	if name != "" || file != "" {
+		if name != "" && file != "" {
+			if f, err := os.Stat(file); os.IsNotExist(err) || f.IsDir() {
+				// TODO: ファイルなし
+			} else {
+				err = zhsig.CreateSig(host, group, name, file)
+			}
 		} else {
-			err = zhsig.CreateSig(host, group, name, file)
-
+			flag.PrintDefaults()
 		}
 	}
 	if err != nil {
