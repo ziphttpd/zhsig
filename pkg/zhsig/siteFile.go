@@ -11,7 +11,7 @@ import (
 func CreateSiteFile(host Host) error {
 	var err error
 	sitefile := host.MySiteFile()
-	if stat, err := os.Stat(sitefile); os.IsNotExist(err) || false == stat.IsDir() {
+	if _, err := os.Stat(sitefile); os.IsNotExist(err) {
 		if pkey, err := PrivateKey(host); err == nil {
 			nameHash := CalcHashBytes([]byte(host.Host()))
 			if base64, err := SignatureBASE64(pkey, nameHash); err == nil {
